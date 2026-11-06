@@ -47,7 +47,8 @@ class _HalamanDaftarTugasState extends State<HalamanDaftarTugas> {
                   label: Text('Semua (${model.jumlahTotal})'),
                   selected: _filterAktif == FilterStatus.semua,
                   onSelected: (selected) {
-                    if (selected) setState(() => _filterAktif = FilterStatus.semua);
+                    if (selected)
+                      setState(() => _filterAktif = FilterStatus.semua);
                   },
                 ),
                 const SizedBox(width: 8),
@@ -55,7 +56,8 @@ class _HalamanDaftarTugasState extends State<HalamanDaftarTugas> {
                   label: Text('Aktif (${model.jumlahAktif})'),
                   selected: _filterAktif == FilterStatus.aktif,
                   onSelected: (selected) {
-                    if (selected) setState(() => _filterAktif = FilterStatus.aktif);
+                    if (selected)
+                      setState(() => _filterAktif = FilterStatus.aktif);
                   },
                 ),
                 const SizedBox(width: 8),
@@ -63,7 +65,8 @@ class _HalamanDaftarTugasState extends State<HalamanDaftarTugas> {
                   label: Text('Selesai (${model.jumlahSelesai})'),
                   selected: _filterAktif == FilterStatus.selesai,
                   onSelected: (selected) {
-                    if (selected) setState(() => _filterAktif = FilterStatus.selesai);
+                    if (selected)
+                      setState(() => _filterAktif = FilterStatus.selesai);
                   },
                 ),
               ],
@@ -92,22 +95,25 @@ class _HalamanDaftarTugasState extends State<HalamanDaftarTugas> {
                     itemCount: daftarTerfilter.length,
                     itemBuilder: (context, i) {
                       final tugas = daftarTerfilter[i];
-                      final formatTgl =
-                          DateFormat('dd MMM yyyy').format(tugas.tenggat);
-                      final sudahLewat = tugas.tenggat.isBefore(DateTime.now()) &&
+                      final formatTgl = DateFormat('dd MMM yyyy')
+                          .format(tugas.tenggat);
+                      final sudahLewat =
+                          tugas.tenggat.isBefore(DateTime.now()) &&
                           !tugas.selesai;
 
                       return Card(
                         margin: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 6),
+                          horizontal: 16,
+                          vertical: 6,
+                        ),
                         elevation: 1,
                         child: ListTile(
                           leading: Checkbox(
                             value: tugas.selesai,
                             onChanged: (_) {
-                              context
-                                  .read<TugasModel>()
-                                  .toggleSelesai(tugas.id);
+                              context.read<TugasModel>().toggleSelesai(
+                                tugas.id,
+                              );
                             },
                           ),
                           title: Text(
@@ -124,11 +130,16 @@ class _HalamanDaftarTugasState extends State<HalamanDaftarTugas> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               const SizedBox(height: 4),
-                              Row(
+                              Wrap(
+                                crossAxisAlignment: WrapCrossAlignment.center,
+                                spacing: 8,
+                                runSpacing: 4,
                                 children: [
                                   Container(
                                     padding: const EdgeInsets.symmetric(
-                                        horizontal: 8, vertical: 2),
+                                      horizontal: 8,
+                                      vertical: 2,
+                                    ),
                                     decoration: BoxDecoration(
                                       color: skema.secondaryContainer,
                                       borderRadius: BorderRadius.circular(4),
@@ -142,39 +153,47 @@ class _HalamanDaftarTugasState extends State<HalamanDaftarTugas> {
                                       ),
                                     ),
                                   ),
-                                  const SizedBox(width: 8),
-                                  Icon(
-                                    Icons.calendar_today,
-                                    size: 13,
-                                    color: sudahLewat
-                                        ? Colors.red
-                                        : skema.outline,
-                                  ),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    formatTgl,
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: sudahLewat
-                                          ? Colors.red
-                                          : skema.outline,
-                                      fontWeight: sudahLewat
-                                          ? FontWeight.bold
-                                          : FontWeight.normal,
-                                    ),
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(
+                                        Icons.calendar_today,
+                                        size: 13,
+                                        color: sudahLewat
+                                            ? Colors.red
+                                            : skema.outline,
+                                      ),
+                                      const SizedBox(width: 4),
+                                      Text(
+                                        formatTgl,
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: sudahLewat
+                                              ? Colors.red
+                                              : skema.outline,
+                                          fontWeight: sudahLewat
+                                              ? FontWeight.bold
+                                              : FontWeight.normal,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ],
                               ),
                             ],
                           ),
                           trailing: IconButton(
-                            icon: const Icon(Icons.delete_outline,
-                                color: Colors.redAccent),
+                            icon: const Icon(
+                              Icons.delete_outline,
+                              color: Colors.redAccent,
+                            ),
                             onPressed: () {
                               context.read<TugasModel>().hapus(tugas.id);
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
-                                  content: Text('Tugas "${tugas.judul}" dihapus'),
+                                  content: Text(
+                                    'Tugas "${tugas.judul}" dihapus',
+                                  ),
                                   duration: const Duration(seconds: 2),
                                 ),
                               );
