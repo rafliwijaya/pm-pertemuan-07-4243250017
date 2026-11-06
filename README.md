@@ -1,4 +1,4 @@
-### Pertmuan 7
+### Pertemuan 7
 ### A. Identitas
 - Nama: Muhammad Rafli Wijaya
 - NIM: 4243250017
@@ -31,24 +31,36 @@
 ![flutteranalyze](./assets/images/tab_tugas.png)
 
 ### C. Diagram
-┌─────────────────────────────────────────────────────────────┐
-│                       ROOT APLIKASI                         │
-│             ChangeNotifierProvider(TugasModel)              │
-│               [ APP STATE / STATE BERSAMA ]                 │
-│         - List<TugasKuliah> (tambah, toggle, hapus)         │
-│         - jumlahTotal, jumlahSelesai, jumlahAktif           │
-└──────────────────────────────┬──────────────────────────────┘
-                               │
-       ┌───────────────────────┼───────────────────────┐
-       ▼                       ▼                       ▼
-┌──────────────────┐  ┌──────────────────┐  ┌──────────────────┐
-│  Halaman Daftar  │  │   Halaman Form   │  │ HalamanStatistik │
-│ [EPHEMERAL STATE]│  │ [EPHEMERAL STATE]│  │                  │
-│ FilterChip:      │  │ TextEditing-     │  │ Membaca:         │
-│ Semua/Aktif/     │  │ Controller di    │  │ total, selesai,  │
-│ Selesai via      │  │ initState &      │  │ persentase       │
-│ setState         │  │ dispose          │  │ otomatis berubah │
-└──────────────────┘  └──────────────────┘  └──────────────────┘
+## Diagram Pembagian State (Ephemeral vs App State)
+
+```mermaid
+flowchart TD
+    subgraph Root ["Root Pohon Widget"]
+        App["MePlanApp"]
+        Model["ChangeNotifierProvider (TugasModel)<br/><b>[ APP STATE / STATE BERSAMA ]</b><br/>• List data tugas kuliah<br/>• Operasi: tambah, toggle selesai, hapus<br/>• Perhitungan: Total, Selesai, Aktif, Persentase"]
+        App --> Model
+    end
+
+    subgraph Pages ["Halaman & Navigasi"]
+        Nav["KerangkaNavigasi<br/><i>(context.select)</i><br/>• Badge jumlah tugas aktif"]
+        Daftar["HalamanDaftarTugas<br/><b>[ EPHEMERAL STATE ]</b><br/>• FilterChip: Semua/Aktif/Selesai<br/>• Dikelola lokal via setState"]
+        Form["HalamanFormTambah<br/><b>[ EPHEMERAL STATE ]</b><br/>• TextEditingController<br/>• Dikelola di initState & dispose"]
+        Statistik["HalamanStatistik<br/><i>(context.watch)</i><br/>• Grafik pencapaian & metrik angka"]
+    end
+
+    Model -->|Update Badge real-time| Nav
+    Model -->|Kirim daftar tugas| Daftar
+    Form -->|Kirim tugas baru via context.read| Model
+    Model -->|Update otomatis persentase| Statistik
+
+    classDef appState fill:#e1f5fe,stroke:#0288d1,stroke-width:2px,color:#01579b;
+    classDef localState fill:#fff3e0,stroke:#f57c00,stroke-width:2px,color:#e65100;
+    classDef observer fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px,color:#4a148c;
+
+    class Model appState;
+    class Daftar,Form localState;
+    class Nav,Statistik observer;
+```
 Alasan Pemisahan State:
 - App State (Bersama via Provider): Daftar tugas dan statistik harus diakses dan diubah oleh berbagai halaman yang terpisah rute go_router. Perubahan status tugas di halaman daftar harus otomatis memperbarui badge navigasi dan persentase di halaman statistik secara bersamaan.
 - Ephemeral State (Lokal via setState): Status filter Semua/Aktif/Selesai di halaman daftar dan teks yang sedang diketik pada form hanya dibutuhkan oleh widget itu sendiri, sehingga cukup dikelola lokal dengan setState supaya render lebih efisien.
