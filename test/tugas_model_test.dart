@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import '../lib/tugas_model.dart';
+import 'package:pm_p7_4243250017/tugas_model.dart';
 
 void main() {
   group('Unit Test Logika State TugasModel', () {
